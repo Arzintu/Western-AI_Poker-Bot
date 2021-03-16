@@ -125,6 +125,8 @@ class EvaluateHand:
         # print("Evaluated: ", end="")
         print(self.score)
 
+        self.player.set_score(self.extracted_score)
+
 
 
 

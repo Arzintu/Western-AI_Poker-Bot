@@ -40,6 +40,25 @@ class Game:
             # Store cards in array
             self.card[x] = self.deck.draw()
 
+
+    def game_to_excel(self, n):
+
+        plist = []
+        glist = []
+        for player in self.player:
+            for card in self.player.get_hand():
+                plist.append(card.getsuit())
+                plist.append(card.get_vale())
+                plist.extend(player.get_score())
+
+        for card in self.card:
+            glist.append(card.getsuit())
+            glist.apend(card.get_vale)
+
+        rlist = glist.extend(plist)
+
+        # Row to excel using openpyxl
+
     # Get Functions
     def get_players(self):
         return self.player
