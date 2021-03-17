@@ -2,6 +2,7 @@ from Deck import Deck
 from Player import Player
 from Evaluate_Hand import EvaluateHand
 from termcolor import colored
+import csv
 
 
 class Game:
@@ -22,10 +23,19 @@ class Game:
 
     # Simulate x number of poker games
     def simulate(self, number_of_games):
+        
+        g_list = [str(0)] * number_of_games
+
         for n in range(number_of_games):
             print("Game " + str(n + 1))
             self.play()
-            self.print()
+            hand_assignment = self.print()
+            g_list[n] = self.extract_game_data(hand_assignment,n)
+            self.export_to_excel(g_list, number_of_games)
+
+        return(g_list)
+
+
 
     # Play a game of Poker
     def play(self):
@@ -34,13 +44,14 @@ class Game:
         # Draw Player Cards
         for p in range(self.number_of_players):
             self.player[p] = Player(self.deck, p)
-
+            
         # Draw Game Cards
         for x in range(5):
             # Store cards in array
             self.card[x] = self.deck.draw()
 
 
+<<<<<<< Updated upstream
     def game_to_excel(self, n):
 
         plist = []
@@ -58,6 +69,41 @@ class Game:
         rlist = glist.extend(plist)
 
         # Row to excel using openpyxl
+=======
+    def extract_game_data(self,hand_assignment,n):
+
+        #p_list = [str(0)] * (2 * n)
+        #b_list = [str(0)] * (5 * 2)
+        p_list = []
+        b_list = []
+
+        for p in range(self.number_of_players):
+            for card in self.player[p].get_hand():
+                p_list.append(card.get_suit())
+                p_list.append(card.get_value())
+
+        for card in self.card:
+            b_list.append(card.get_suit())
+            b_list.append(card.get_value())
+
+        p_list.extend(b_list)
+        p_list.extend([hand_assignment])
+        return (p_list)
+
+    def export_to_excel(self,g_list, number_of_games):
+        with open('Poker_SinglePlayer.csv', 'w', newline = '') as f:
+            thewriter = csv.writer(f)
+            headers = ['Card 1 suit', 'Card 1 value','Card 2 suit', 'Card 2 value','Card 3 suit', 'Card 3 value','Card 4 suit',\
+                'Card 4 value','Card 5 suit', 'Card 5 value', 'Card 6 suit', 'Card 6 value', 'Card 7 suit', 'Card 7 value',\
+                'Label']
+            thewriter.writerow(headers)
+
+            for n in range(number_of_games):
+                thewriter.writerow(g_list[n])
+            
+            print("Extraction complete")
+
+>>>>>>> Stashed changes
 
     # Get Functions
     def get_players(self):
@@ -92,7 +138,9 @@ class Game:
 
 
             print()
-            EvaluateHand(self, player)
+            evaluate = EvaluateHand(self, player)
+            hand_assignment = evaluate.count()
+
 
         print("Game Cards")
         for card in self.get_cards():
@@ -102,5 +150,12 @@ class Game:
         print()
         print()
 
-poker = Game(2)
-poker.simulate(1000)
+        return hand_assignment
+
+poker = Game(1)
+num_games = 1000
+g_cards = [str(0)] * num_games
+
+game_data = poker.simulate(num_games)
+print(game_data)
+
