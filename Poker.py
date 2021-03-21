@@ -35,8 +35,6 @@ class Game:
 
         return(g_list)
 
-
-
     # Play a game of Poker
     def play(self):
         self.deck.reset()
@@ -50,8 +48,6 @@ class Game:
             # Store cards in array
             self.card[x] = self.deck.draw()
 
-
-<<<<<<< Updated upstream
     def game_to_excel(self, n):
 
         plist = []
@@ -69,7 +65,7 @@ class Game:
         rlist = glist.extend(plist)
 
         # Row to excel using openpyxl
-=======
+
     def extract_game_data(self,hand_assignment,n):
 
         #p_list = [str(0)] * (2 * n)
@@ -101,9 +97,8 @@ class Game:
             for n in range(number_of_games):
                 thewriter.writerow(g_list[n])
             
-            print("Extraction complete")
+            # print("Extraction complete")
 
->>>>>>> Stashed changes
 
     # Get Functions
     def get_players(self):
@@ -150,6 +145,7 @@ class Game:
         print()
         print()
 
+
         return hand_assignment
 
 poker = Game(1)
@@ -157,5 +153,5 @@ num_games = 1000
 g_cards = [str(0)] * num_games
 
 game_data = poker.simulate(num_games)
-print(game_data)
+
 

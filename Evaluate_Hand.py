@@ -8,7 +8,6 @@ class EvaluateHand:
         self.card = list(game.get_cards())
         self.card.extend(player.get_hand())
         self.player_hand = player.get_hand()
-        print(f"{self.card} +  + {self.player_hand}")
 
         """""
         self.player_card = [0] * self.number_of_players * 2
@@ -45,6 +44,7 @@ class EvaluateHand:
         for card in self.card:
             card_sort[card.get_value()-2][card.get_suit()] = 1
 
+        hand_rank = 0
         hand_assignment = ""
 
         sequence_count = 0
@@ -60,14 +60,12 @@ class EvaluateHand:
                     track_suit[suit] = 0
 
             if rank_count:
-
                 sequence_count += 1
 
                 # High Card
                 if rank_count == 1:
                     self.high_card = rank
                     self.score[0] = rank
-                    hand_assignment = "Nothing In Hand_2"
 
                 # Pair
                 # Two Pair
@@ -79,68 +77,86 @@ class EvaluateHand:
 
                         self.score[2] = self.two_pair
                         self.score[1] = self.pair
+
+                        hand_rank = max(hand_rank, 2)
                         hand_assignment = "Two Pairs"
 
                     # Pair
                     else:
                         self.pair = rank
                         self.score[1] = self.pair
+
+                        hand_rank = max(hand_rank, 1)
                         hand_assignment = "One Pair"
 
                 # Three of a Kind
                 elif rank_count == 3:
                     self.three_of_a_kind = rank
                     self.score[3] = rank
-                    hand_assignment = "Three of a Kind"
+
+                    hand_rank = max(hand_rank, 3)
 
                 # Four of a Kind
                 elif rank_count == 4:
                     self.four_of_a_kind = rank
                     self.score[7] = rank
-                    hand_assignment = "Four of a Kind"
+                    hand_rank = max(hand_rank, 7)
 
                 # Straight
-                # Straight Flush
-                # Royal Flush
-                if sequence_count == 5:
-                    hand_assignment = "Straight"
 
+                if sequence_count == 5:
                     self.straight = rank
                     self.score[4] = rank
+                    hand_rank = max(hand_rank, 4)
 
-                    for suit in track_suit:
-                        if suit == 5:
-                            hand_assignment = " Flush"
+                # Flush
+                # Straight Flush
+                # Royal Flush
 
+                for suit in track_suit:
+                    if suit == 5:
+                        self.flush = rank
+                        self.score[5] = self.flush
+
+                        hand_rank = max(hand_rank, 5)
+                        hand_assignment = " Flush"
+
+                        if sequence_count == 5:
                             if rank != 14:
                                 self.straight_flush = rank
                                 self.score[8] = self.straight_flush
-                                print("Straight Flush!")
-                                hand_assignment = "Straight Flush"
+
+                                hand_rank = max(hand_rank, 8)
 
                             else:
                                 self.royal_flush = rank
                                 self.score[9] = self.royal_flush
-                                print("Royal!")
+
+                                hand_rank = max(hand_rank, 9)
                                 hand_assignment = "Royal Flush"
 
             # No card of specified rank counted
             else:
                 # Reset Straight Count
                 sequence_count = 0
-                hand_assignment = "Nothing in Hand"
+
 
         # Full House
         if self.pair != 0 and self.three_of_a_kind != 0:
             self.full_house = self.three_of_a_kind * 13 + self.pair
             self.score[6] = self.full_house
 
+            hand_rank = max(hand_rank, 6)
+
+
         # print("Evaluated: [H, 2K, 2P, 3K, ST, FL, FH, 4K, SF, RF")
         # print("Evaluated: ", end="")
         print(self.score)
+
+        hand_rank_map = ["High Card", "One Pair", "Two Pairs", "Three of a Kind", "Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush", "Royal Flush" ]
+        hand_assignment = hand_rank_map[hand_rank]
         return hand_assignment
 
-        self.player.set_score(self.extracted_score)
 
 
 
