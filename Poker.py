@@ -2,10 +2,16 @@ from Deck import Deck
 from Player import Player
 from Evaluate_Hand import EvaluateHand
 from termcolor import colored
-import csv
+
+from openpyxl import Workbook
 
 
 class Game:
+
+    filename = "C:/Users/Owner/Documents/GitHub/Western-AI_Poker-Bot/Poker_Data.xlsx"
+    wb = Workbook(write_only=True)
+    ws = wb.create_sheet()
+
     def __init__(self, number_of_players):
 
         # Game Class variables
@@ -19,21 +25,28 @@ class Game:
         # self.player_card = [0] * self.number_of_players * 2
 
         # Instantly start a new game
+        self.excel_header()
         self.play()
 
     # Simulate x number of poker games
     def simulate(self, number_of_games):
-        
-        g_list = [str(0)] * number_of_games
 
+        # Simulate poker games
         for n in range(number_of_games):
-            print("Game " + str(n + 1))
+            if n % 10000 == 0:
+                print("Game " + str(n + 1))
             self.play()
-            hand_assignment = self.print()
-            g_list[n] = self.extract_game_data(hand_assignment,n)
-            self.export_to_excel(g_list, number_of_games)
 
-        return(g_list)
+            # Evaluate each player's hand
+            for player in self.player:
+                evaluate = EvaluateHand(self, player)
+                hand_assignment = evaluate.count()
+
+            # Export Data to Excel
+            self.ws.append(self.extract_game_data(hand_assignment, n))
+
+        # Save Excel File
+        self.wb.save(r"C:/Users/Owner/Documents/GitHub/Western-AI_Poker-Bot/Poker_Data.xlsx")
 
     # Play a game of Poker
     def play(self):
@@ -48,28 +61,8 @@ class Game:
             # Store cards in array
             self.card[x] = self.deck.draw()
 
-    def game_to_excel(self, n):
+    def extract_game_data(self, hand_assignment, n):
 
-        plist = []
-        glist = []
-        for player in self.player:
-            for card in self.player.get_hand():
-                plist.append(card.getsuit())
-                plist.append(card.get_vale())
-                plist.extend(player.get_score())
-
-        for card in self.card:
-            glist.append(card.getsuit())
-            glist.apend(card.get_vale)
-
-        rlist = glist.extend(plist)
-
-        # Row to excel using openpyxl
-
-    def extract_game_data(self,hand_assignment,n):
-
-        #p_list = [str(0)] * (2 * n)
-        #b_list = [str(0)] * (5 * 2)
         p_list = []
         b_list = []
 
@@ -86,19 +79,17 @@ class Game:
         p_list.extend([hand_assignment])
         return (p_list)
 
-    def export_to_excel(self,g_list, number_of_games):
-        with open('Poker_SinglePlayer.csv', 'w', newline = '') as f:
-            thewriter = csv.writer(f)
-            headers = ['Card 1 suit', 'Card 1 value','Card 2 suit', 'Card 2 value','Card 3 suit', 'Card 3 value','Card 4 suit',\
-                'Card 4 value','Card 5 suit', 'Card 5 value', 'Card 6 suit', 'Card 6 value', 'Card 7 suit', 'Card 7 value',\
-                'Label']
-            thewriter.writerow(headers)
+    def excel_header(self):
+        headers = ['Card 1 suit', 'Card 1 value', 'Card 2 suit', 'Card 2 value', 'Card 3 suit', 'Card 3 value',
+                   'Card 4 suit',
+                   'Card 4 value', 'Card 5 suit', 'Card 5 value', 'Card 6 suit', 'Card 6 value', 'Card 7 suit',
+                   'Card 7 value',
+                   'Label']
 
-            for n in range(number_of_games):
-                thewriter.writerow(g_list[n])
-            
-            # print("Extraction complete")
+        self.ws.append(headers)
 
+    def save_excel_file(self):
+        self.wb.save()
 
     # Get Functions
     def get_players(self):
@@ -133,8 +124,6 @@ class Game:
 
 
             print()
-            evaluate = EvaluateHand(self, player)
-            hand_assignment = evaluate.count()
 
 
         print("Game Cards")
@@ -145,13 +134,9 @@ class Game:
         print()
         print()
 
-
-        return hand_assignment
-
 poker = Game(1)
-num_games = 1000
-g_cards = [str(0)] * num_games
+num_games = 5000000
 
-game_data = poker.simulate(num_games)
+poker.simulate(num_games)
 
 

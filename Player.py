@@ -4,7 +4,6 @@ class Player:
 
         # [card_1, card_2]
         self.card = deck.deal()
-
         self.score = [2, 10]
 
     # Get Functions

@@ -87,7 +87,6 @@ class EvaluateHand:
                         self.score[1] = self.pair
 
                         hand_rank = max(hand_rank, 1)
-                        hand_assignment = "One Pair"
 
                 # Three of a Kind
                 elif rank_count == 3:
@@ -119,7 +118,6 @@ class EvaluateHand:
                         self.score[5] = self.flush
 
                         hand_rank = max(hand_rank, 5)
-                        hand_assignment = " Flush"
 
                         if sequence_count == 5:
                             if rank != 14:
@@ -133,13 +131,11 @@ class EvaluateHand:
                                 self.score[9] = self.royal_flush
 
                                 hand_rank = max(hand_rank, 9)
-                                hand_assignment = "Royal Flush"
 
             # No card of specified rank counted
             else:
                 # Reset Straight Count
                 sequence_count = 0
-
 
         # Full House
         if self.pair != 0 and self.three_of_a_kind != 0:
@@ -148,10 +144,9 @@ class EvaluateHand:
 
             hand_rank = max(hand_rank, 6)
 
-
         # print("Evaluated: [H, 2K, 2P, 3K, ST, FL, FH, 4K, SF, RF")
         # print("Evaluated: ", end="")
-        print(self.score)
+        # print(self.score)
 
         hand_rank_map = ["High Card", "One Pair", "Two Pairs", "Three of a Kind", "Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush", "Royal Flush" ]
         hand_assignment = hand_rank_map[hand_rank]
